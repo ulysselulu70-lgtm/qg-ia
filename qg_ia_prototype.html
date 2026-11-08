@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QG IA — Centre de commandement</title>
+<style>
+:root{--bg:#101522;--panel:#192235;--panel2:#202d43;--line:#30415e;--text:#eef4ff;--muted:#a9b8cf;--blue:#78aaff;--green:#62d6a3;--yellow:#ffd27a}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 20% 0,#253657 0,#101522 48%);color:var(--text);font:15px system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:1100px;margin:auto;padding:22px}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+h1{font-size:clamp(24px,5vw,34px);margin:0}h2{font-size:18px;margin:0 0 12px}
+.sub{color:var(--muted);margin-top:5px}.pill{border:1px solid #3b5879;background:#1d3048;border-radius:999px;padding:7px 11px;color:#cfe2ff;font-size:12px}
+.grid{display:grid;grid-template-columns:1.15fr .85fr;gap:16px}
+.panel{background:rgba(25,34,53,.94);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 12px 35px #0003}
+.office{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.room{min-height:125px;background:linear-gradient(145deg,#263752,#1a2639);border:1px solid #3a506e;border-radius:14px;padding:12px;display:flex;flex-direction:column;justify-content:space-between}
+.room .emoji{font-size:27px}.room strong{display:block;margin-top:6px}.room small{color:var(--muted)}
+.status{font-size:11px;color:var(--green);margin-top:8px}
+.agentlist{display:grid;gap:9px}
+.agent{display:flex;align-items:center;gap:10px;background:#202d43;border-radius:12px;padding:10px}
+.avatar{width:38px;height:38px;border-radius:12px;background:#314766;display:grid;place-items:center;font-size:21px;flex-shrink:0}
+.agent small{display:block;color:var(--muted);margin-top:2px}.state{margin-left:auto;color:var(--muted);font-size:11px;text-align:right}
+textarea{width:100%;min-height:94px;resize:vertical;background:#111a29;color:var(--text);border:1px solid #425675;border-radius:12px;padding:12px;font:inherit}
+button{background:linear-gradient(135deg,#6da7ff,#8a8bff);color:#0c1730;border:0;border-radius:12px;padding:12px 16px;font-weight:750;font-size:14px;cursor:pointer}
+button:disabled{opacity:.5;cursor:not-allowed}.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.note{font-size:12px;color:var(--yellow);line-height:1.45;margin-top:12px}
+.log{display:grid;gap:8px;margin-top:10px}.event{background:#111a29;border:1px solid #2d405c;border-radius:10px;padding:10px;font-size:13px}.event small{display:block;color:var(--muted);margin-top:4px}
+footer{color:var(--muted);font-size:12px;text-align:center;margin:18px 0}
+@media(max-width:760px){main{padding:14px}.grid{grid-template-columns:1fr}.office{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<main>
+<header>
+ <div><h1>🏢 QG IA</h1><div class="sub">Centre de commandement · Prototype 1</div></div>
+ <span class="pill">🟢 Interface de démonstration</span>
+</header>
+<div class="grid">
+ <section class="panel">
+  <h2>🗺️ Vue de l'entreprise</h2>
+  <div class="office">
+   <div class="room"><div class="emoji">👑</div><div><strong>Direction</strong><small>PDG · Secrétaire</small><div class="status">● Bureau central</div></div></div>
+   <div class="room"><div class="emoji">🎬</div><div><strong>Studio vidéo</strong><small>Scénario · Montage</small><div class="status" id="videoStatus">● En attente</div></div></div>
+   <div class="room"><div class="emoji">✉️</div><div><strong>Courrier</strong><small>Mails · Lettres</small><div class="status" id="mailStatus">● En attente</div></div></div>
+   <div class="room"><div class="emoji">🎨</div><div><strong>Création</strong><small>Affiches · Visuels</small><div class="status" id="designStatus">● En attente</div></div></div>
+   <div class="room"><div class="emoji">🔎</div><div><strong>Recherche</strong><small>Études · Synthèses</small><div class="status" id="researchStatus">● En attente</div></div></div>
+   <div class="room"><div class="emoji">💻</div><div><strong>Informatique</strong><small>Sites · Code</small><div class="status" id="techStatus">● En attente</div></div></div>
+  </div>
+  <p class="note">Cette première version montre la répartition des missions. Les bureaux et statuts sont visuels : aucun agent IA autonome n'est encore connecté.</p>
+ </section>
+ <section class="panel">
+  <h2>👥 Équipe — 6 rôles de départ</h2>
+  <div class="agentlist">
+   <div class="agent"><div class="avatar">🧑‍💼</div><div><b>Secrétaire</b><small>Reçoit et classe ta demande</small></div><div class="state">Accueil</div></div>
+   <div class="agent"><div class="avatar">👑</div><div><b>PDG</b><small>Coordonne les services</small></div><div class="state">Direction</div></div>
+   <div class="agent"><div class="avatar">🎬</div><div><b>Spécialiste vidéo</b><small>Prépare les projets vidéo</small></div><div class="state" id="videoAgent">Disponible</div></div>
+   <div class="agent"><div class="avatar">✉️</div><div><b>Spécialiste courrier</b><small>Rédige les mails et lettres</small></div><div class="state" id="mailAgent">Disponible</div></div>
+   <div class="agent"><div class="avatar">🎨</div><div><b>Graphiste</b><small>Imagine les visuels</small></div><div class="state" id="designAgent">Disponible</div></div>
+   <div class="agent"><div class="avatar">🔎</div><div><b>Chercheur</b><small>Organise les recherches</small></div><div class="state" id="researchAgent">Disponible</div></div>
+  </div>
+ </section>
+ <section class="panel">
+  <h2>💬 Parler au secrétaire</h2>
+  <p class="sub">Exemples : « rédige un mail », « crée une vidéo », « fais une recherche » ou « prépare une affiche ».</p>
+  <textarea id="request" placeholder="Bonjour, voici ce que je voudrais faire…"></textarea>
+  <div class="row"><button id="send">Envoyer la mission</button><span class="sub" id="reply" aria-live="polite">Le secrétaire attend ta demande.</span></div>
+  <p class="note">Démo : le secrétaire reconnaît quelques mots-clés et affecte la mission au bon service. Il ne réalise pas encore le travail demandé.</p>
+ </section>
+ <section class="panel">
+  <h2>📋 Journal des missions</h2>
+  <div class="log" id="log"><div class="event">Bienvenue dans ton QG.<small>Aucune mission envoyée pour le moment.</small></div></div>
+ </section>
+</div>
+<footer>Prototype éducatif · Ne saisis aucune donnée personnelle, mot de passe ou information confidentielle.</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const routes=[
+ {keys:["vidéo","video","film","montage"],name:"Spécialiste vidéo",status:"videoStatus",agent:"videoAgent",room:"Studio vidéo",task:"Préparation vidéo"},
+ {keys:["mail","e-mail","email","courrier","lettre"],name:"Spécialiste courrier",status:"mailStatus",agent:"mailAgent",room:"Courrier",task:"Rédaction"},
+ {keys:["affiche","logo","dessin","visuel","design"],name:"Graphiste",status:"designStatus",agent:"designAgent",room:"Création",task:"Création visuelle"},
+ {keys:["recherche","cherche","étude","informations","résumé"],name:"Chercheur",status:"researchStatus",agent:"researchAgent",room:"Recherche",task:"Recherche documentaire"}
+];
+$("send").addEventListener("click",()=>{
+ const value=$("request").value.trim();
+ if(!value){$("reply").textContent="Écris d'abord une mission.";return;}
+ const lower=value.toLocaleLowerCase("fr");
+ const route=routes.find(r=>r.keys.some(k=>lower.includes(k)));
+ const time=new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});
+ if(route){
+  $(route.status).textContent="● Mission attribuée";
+  $(route.agent).textContent="Mission reçue";
+  $("reply").textContent="Le secrétaire transmet la demande au service "+route.room+".";
+  const detail=route.name+" reçoit : « "+value+" »";
+  const item=document.createElement("div");item.className="event";
+  item.textContent="📨 "+detail;
+  const small=document.createElement("small");small.textContent=time+" · "+route.task+" · Démonstration uniquement";
+  item.appendChild(small);$("log").prepend(item);
+ }else{
+  $("reply").textContent="Le secrétaire ne reconnaît pas encore ce type de demande.";
+  const item=document.createElement("div");item.className="event";item.textContent="❔ Demande à classer : "+value;
+  const small=document.createElement("small");small.textContent=time+" · Aucun spécialiste attribué";
+  item.appendChild(small);$("log").prepend(item);
+ }
+});
+</script>
+</body>
+</html>
