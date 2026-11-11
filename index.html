@@ -2,181 +2,278 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>QG IA — Centre de commandement</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QG IA — Version 8</title>
 <style>
-:root{--bg:#101522;--panel:#192235;--line:#30415e;--text:#eef4ff;--muted:#a9b8cf;--green:#62d6a3}
+:root {
+  --bg:#080d19;--panel:#111b2e;--panel2:#17243b;
+  --line:#263958;--text:#edf4ff;--muted:#91a4c2;
+  --blue:#55aaff;--cyan:#35e0e0;--green:#48d9a0;
+}
 *{box-sizing:border-box}
-body{margin:0;background:#101522;color:var(--text);font:15px system-ui}
-main{max-width:1100px;margin:auto;padding:18px}
-h1{margin:0}h2{font-size:18px}
-.sub,small{color:var(--muted)}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:15px}
-.agent{padding:10px;background:#202d43;border-radius:10px;margin:7px 0}
-textarea{width:100%;min-height:85px;background:#111a29;color:white;border:1px solid #425675;border-radius:10px;padding:12px;font:inherit}
-button{background:#78aaff;color:#101522;border:0;border-radius:9px;padding:11px 14px;font-weight:bold;margin-top:9px}
-button:disabled{opacity:.5}
-.item{background:#111a29;padding:12px;border-radius:10px;margin:9px 0;border:1px solid #30415e}
+body{margin:0;background:radial-gradient(circle at top,#172c4c,#080d19 55%);color:var(--text);font-family:Arial,sans-serif;min-height:100vh}
+button,input,textarea{font:inherit}
+header{height:70px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 22px;background:#0b1424eF;position:sticky;top:0;z-index:5}
+.logo{font-size:20px;font-weight:900;letter-spacing:2px}
+.logo span{color:var(--cyan)}
 .status{color:var(--green);font-size:12px}
-@media(max-width:700px){.grid{grid-template-columns:1fr}}
+.layout{display:grid;grid-template-columns:235px 1fr;min-height:calc(100vh - 70px)}
+aside{padding:20px 14px;border-right:1px solid var(--line);background:#0c1525}
+.navtitle{font-size:10px;color:var(--muted);letter-spacing:2px;margin:18px 10px 9px}
+.nav{display:block;width:100%;text-align:left;padding:13px;border:0;border-radius:10px;background:transparent;color:var(--muted);margin:4px 0;cursor:pointer}
+.nav.active,.nav:hover{background:#1a3150;color:white}
+main{padding:25px;min-width:0}
+h1{font-size:28px;margin:0 0 7px}
+.subtitle{color:var(--muted);font-size:13px;margin-bottom:24px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:22px}
+.stat,.panel,.dept{background:linear-gradient(145deg,#15243b,#101a2c);border:1px solid var(--line);border-radius:15px;padding:17px}
+.stat small{color:var(--muted)}
+.stat strong{display:block;font-size:27px;margin-top:9px}
+.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:16px}
+.panel h2{font-size:16px;margin:0 0 15px}
+.activity{padding:12px 0;border-bottom:1px solid var(--line);font-size:13px;color:#c5d5ed}
+.activity:last-child{border:0}
+.dot{display:inline-block;width:8px;height:8px;background:var(--green);border-radius:50%;margin-right:8px}
+.depts{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.dept{cursor:pointer;transition:.2s}
+.dept:hover{border-color:var(--cyan);transform:translateY(-2px)}
+.dept .emoji{font-size:25px}
+.dept h3{font-size:14px;margin:10px 0 5px}
+.dept p{font-size:12px;color:var(--muted);margin:0}
+.tag{display:inline-block;font-size:10px;color:var(--cyan);margin-top:12px}
+.view{display:none}
+.view.active{display:block}
+.chat{height:390px;display:flex;flex-direction:column}
+.messages{flex:1;overflow:auto;padding:10px 0}
+.msg{padding:12px;margin:8px 0;border-radius:12px;max-width:90%;font-size:13px;line-height:1.5;white-space:pre-wrap}
+.msg.ai{background:#1b2d49;border:1px solid #304968}
+.msg.user{background:#16466b;margin-left:auto}
+.chatbar{display:flex;gap:8px;margin-top:10px}
+.chatbar input{flex:1;min-width:0;background:#0b1424;border:1px solid var(--line);border-radius:10px;padding:13px;color:white}
+button.primary{background:linear-gradient(90deg,#168bda,#23bfc9);border:0;color:white;padding:12px 17px;border-radius:10px;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.5}
+.employee{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--line);font-size:13px}
+.employee span{color:var(--muted)}
+textarea{width:100%;min-height:100px;background:#0b1424;border:1px solid var(--line);border-radius:10px;color:white;padding:12px}
+@media(max-width:800px){
+ .layout{grid-template-columns:1fr}
+ aside{display:flex;overflow:auto;gap:5px;padding:8px;border-right:0;border-bottom:1px solid var(--line)}
+ .navtitle{display:none}
+ .nav{white-space:nowrap;width:auto;margin:0;padding:10px}
+ main{padding:15px}
+ .stats{grid-template-columns:repeat(2,1fr)}
+ .grid{grid-template-columns:1fr}
+}
+@media(max-width:430px){.depts{grid-template-columns:1fr}.logo{font-size:16px}}
 </style>
 </head>
 <body>
-<main>
 <header>
-<h1>🏢 QG IA</h1>
-<p class="sub">Centre de commandement · Version 2</p>
+ <div class="logo">QG <span>IA</span> / COMMAND</div>
+ <div class="status">● SYSTÈME EN LIGNE</div>
 </header>
-
-<div class="grid">
-<section class="panel">
-<h2>👑 Direction</h2>
-<p>Bienvenue dans ton entreprise IA.</p>
-<h2>👥 Équipe</h2>
-<div class="agent">🧑‍💼 Secrétaire — Accueil</div>
-<div class="agent">🎨 Graphiste — Création visuelle</div>
-<div class="agent">🎬 Vidéaste — Production vidéo</div>
-<div class="agent">✉️ Courrier — Rédaction</div>
-<div class="agent">🔎 Chercheur — Recherche</div>
+<div class="layout">
+<aside>
+ <div class="navtitle">COMMANDement</div>
+ <button class="nav active" data-view="dashboard">◈ Tableau de bord</button>
+ <button class="nav" data-view="secretary">✦ Secrétaire générale</button>
+ <button class="nav" data-view="departments">▦ Départements</button>
+ <button class="nav" data-view="employees">♙ Employés</button>
+ <button class="nav" data-view="missions">◎ Missions</button>
+ <div class="navtitle">DIRECTION</div>
+ <button class="nav" data-view="director">♛ Bureau du PDG</button>
+</aside>
+<main>
+<section class="view active" id="dashboard">
+ <h1>Centre de commandement</h1>
+ <div class="subtitle">Bienvenue, Directeur général. Voici l'état de votre entreprise.</div>
+ <div class="stats">
+  <div class="stat"><small>Agents virtuels</small><strong>70</strong></div>
+  <div class="stat"><small>Départements</small><strong>10</strong></div>
+  <div class="stat"><small>Missions créées</small><strong id="missionCount">0</strong></div>
+  <div class="stat"><small>Budget cible</small><strong>0 €</strong></div>
+ </div>
+ <div class="grid">
+  <div class="panel">
+   <h2>Départements de l'entreprise</h2>
+   <div class="depts" id="dashboardDepts"></div>
+  </div>
+  <div class="panel">
+   <h2>Journal du QG</h2>
+   <div id="activityLog">
+    <div class="activity"><span class="dot"></span>Centre de commandement initialisé</div>
+    <div class="activity"><span class="dot"></span>70 profils virtuels disponibles</div>
+    <div class="activity"><span class="dot"></span>En attente de vos instructions</div>
+   </div>
+  </div>
+ </div>
 </section>
 
-<section class="panel">
-<h2>💬 Parler au secrétaire</h2>
-<textarea id="request" placeholder="Décris ta mission..."></textarea>
-<button onclick="sendMission()">Envoyer la mission</button>
-<p id="reply" class="sub">Le secrétaire attend tes instructions.</p>
+<section class="view" id="secretary">
+ <h1>Secrétaire générale</h1>
+ <div class="subtitle">Votre interlocutrice centrale pour organiser et diriger le QG.</div>
+ <div class="panel chat">
+  <h2>✦ Assistant de direction</h2>
+  <div class="messages" id="messages">
+   <div class="msg ai">Bonjour Directeur général ! Je suis votre secrétaire générale. Je peux vous aider à organiser les départements, préparer des missions et réfléchir à la stratégie de l'entreprise. Que souhaitez-vous faire ?</div>
+  </div>
+  <div class="chatbar">
+   <input id="chatInput" placeholder="Écrivez votre instruction..." />
+   <button class="primary" id="sendBtn">Envoyer</button>
+  </div>
+  <div class="subtitle" id="chatStatus" style="margin:10px 0 0">Connexion à l'assistant en attente.</div>
+ </div>
 </section>
 
-<section class="panel">
-<h2>📥 Boîte de réception du graphiste</h2>
-<div id="inbox"><p class="sub">Aucune mission reçue.</p></div>
+<section class="view" id="departments">
+ <h1>Les départements</h1>
+ <div class="subtitle">Dix équipes spécialisées, six employés virtuels par équipe.</div>
+ <div class="depts" id="allDepts"></div>
 </section>
 
-<section class="panel">
-<h2>🎨 Atelier du graphiste</h2>
-<div id="work">
-<p class="sub">Sélectionne une mission dans la boîte de réception.</p>
-</div>
+<section class="view" id="employees">
+ <h1>Répertoire des employés</h1>
+ <div class="subtitle">Les 60 employés spécialisés et leurs responsables.</div>
+ <div class="panel" id="employeeList"></div>
 </section>
 
-<section class="panel">
-<h2>📦 Livraisons au directeur</h2>
-<div id="delivery"><p class="sub">Aucune livraison.</p></div>
+<section class="view" id="missions">
+ <h1>Centre des missions</h1>
+ <div class="subtitle">Créez et suivez les missions de votre entreprise.</div>
+ <div class="panel">
+  <h2>Nouvelle mission</h2>
+  <textarea id="missionInput" placeholder="Décrivez la mission à réaliser..."></textarea>
+  <br><br>
+  <button class="primary" id="createMission">Créer la mission</button>
+  <div id="missionList" style="margin-top:15px"></div>
+ </div>
 </section>
 
-<section class="panel">
-<h2>📋 Journal des missions</h2>
-<div id="log">QG démarré.</div>
+<section class="view" id="director">
+ <h1>Bureau du PDG</h1>
+ <div class="subtitle">Votre espace personnel de direction.</div>
+ <div class="panel">
+  <h2>Profil du directeur général</h2>
+  <p>Vous dirigez l'ensemble du QG IA et décidez des objectifs de l'entreprise.</p>
+  <p><span class="tag">AUTORITÉ : DIRECTION GÉNÉRALE</span></p>
+  <h2 style="margin-top:25px">Votre priorité actuelle</h2>
+  <textarea id="priority" placeholder="Définissez l'objectif principal de l'entreprise..."></textarea>
+  <br><br><button class="primary" id="savePriority">Enregistrer ma priorité</button>
+  <p id="priorityStatus" class="subtitle"></p>
+ </div>
 </section>
-</div>
 </main>
-
+</div>
 <script>
-let missions=[];
-let selected=null;
+const departments=[
+ ["🎨","Graphisme","Création visuelle et identité graphique"],
+ ["📰","Journalisme","Articles, actualités et rédaction"],
+ ["💻","Informatique","Développement et technologie"],
+ ["📈","Marketing","Stratégie et croissance"],
+ ["🔬","Recherche","Analyses et découvertes"],
+ ["🎬","Audiovisuel","Vidéo, son et production"],
+ ["🏅","Sport","Actualité et projets sportifs"],
+ ["💼","Gestion","Organisation et pilotage"],
+ ["📡","Communication","Relations et diffusion"],
+ ["💡","Innovation","Idées et nouveaux projets"]
+];
+const names=["Directeur","Responsable de projet","Analyste","Spécialiste","Assistant","Coordinateur"];
+const $=id=>document.getElementById(id);
+let missions=JSON.parse(localStorage.getItem("qg_missions")||"[]");
+let history=JSON.parse(localStorage.getItem("qg_history")||"[]");
 
-function log(message){
- const el=document.createElement("div");
- el.className="item";
- el.textContent=new Date().toLocaleTimeString("fr-FR")+" — "+message;
- document.getElementById("log").prepend(el);
+function deptCard(d,i){
+ return `<div class="dept" data-dept="${i}"><div class="emoji">${d[0]}</div><h3>${d[1]}</h3><p>${d[2]}</p><div class="tag">6 EMPLOYÉS · ÉQUIPE ACTIVE</div></div>`;
 }
+$("dashboardDepts").innerHTML=departments.slice(0,4).map(deptCard).join("");
+$("allDepts").innerHTML=departments.map(deptCard).join("");
 
-function sendMission(){
- const value=document.getElementById("request").value.trim();
- if(!value)return alert("Écris une mission.");
-
- const isDesign=/affiche|logo|dessin|visuel|graph|design/i.test(value);
-
- if(!isDesign){
- document.getElementById("reply").textContent=
- "Cette version dirige actuellement les missions graphiques vers le graphiste.";
- return;
- }
-
- const mission={
- id:Date.now(),
- text:value,
- status:"À traiter",
- result:""
- };
-
- missions.push(mission);
- document.getElementById("request").value="";
- document.getElementById("reply").textContent=
- "Mission transmise au graphiste !";
- renderInbox();
- log("Mission transmise au graphiste.");
+function showView(id){
+ document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id===id));
+ document.querySelectorAll(".nav").forEach(b=>b.classList.toggle("active",b.dataset.view===id));
 }
+document.querySelectorAll(".nav").forEach(b=>b.onclick=()=>showView(b.dataset.view));
 
-function renderInbox(){
- const inbox=document.getElementById("inbox");
- inbox.innerHTML="";
-
- missions.forEach(m=>{
- const item=document.createElement("div");
- item.className="item";
- const title=document.createElement("b");
- title.textContent="🎨 Mission #"+m.id;
- const description=document.createElement("p");
- description.textContent=m.text;
- const status=document.createElement("p");
- status.className="status";
- status.textContent=m.status;
- const btn=document.createElement("button");
- btn.textContent="Ouvrir la mission";
- btn.onclick=()=>openMission(m.id);
- item.append(title,description,status,btn);
- inbox.appendChild(item);
- });
+function addActivity(text){
+ const el=document.createElement("div");el.className="activity";
+ el.innerHTML='<span class="dot"></span>';
+ el.append(document.createTextNode(text));
+ $("activityLog").prepend(el);
 }
-
-function openMission(id){
- selected=missions.find(m=>m.id===id);
- const work=document.getElementById("work");
- work.innerHTML="";
-
- const title=document.createElement("p");
- title.textContent="Mission : "+selected.text;
- const area=document.createElement("textarea");
- area.placeholder="Décris ici le résultat ou ajoute un lien vers ton visuel.";
- area.value=selected.result;
-
- const send=document.createElement("button");
- send.textContent="Livrer au directeur";
- send.onclick=()=>{
- if(!area.value.trim())return alert("Ajoute d'abord un résultat.");
- selected.result=area.value.trim();
- selected.status="Livrée";
- renderInbox();
- renderDelivery();
- log("Le graphiste a livré la mission au directeur.");
- work.textContent="Mission livrée avec succès !";
- };
- work.append(title,area,send);
+function showDepartment(i){
+ const d=departments[i];
+ showView("employees");
+ $("employeeList").innerHTML=`<h2>${d[0]} ${d[1]}</h2>`+
+ names.map((n,j)=>`<div class="employee"><b>${n} ${j===0?"— Chef d'équipe":j}</b><span>${d[1]}</span></div>`).join("");
 }
+document.addEventListener("click",e=>{
+ const card=e.target.closest("[data-dept]");
+ if(card)showDepartment(Number(card.dataset.dept));
+});
 
-function renderDelivery(){
- const delivery=document.getElementById("delivery");
- const done=missions.filter(m=>m.status==="Livrée");
- delivery.innerHTML="";
- if(!done.length){
- delivery.textContent="Aucune livraison.";
- return;
- }
- done.forEach(m=>{
- const item=document.createElement("div");
- item.className="item";
- const title=document.createElement("b");
- title.textContent="🎁 Livraison du graphiste";
- const result=document.createElement("p");
- result.textContent=m.result;
- item.append(title,result);
- delivery.appendChild(item);
- });
+function renderMissions(){
+ $("missionCount").textContent=missions.length;
+ $("missionList").innerHTML=missions.length?missions.map((m,i)=>
+ `<div class="employee"><b>${i+1}. ${escapeHTML(m)}</b><span>À traiter</span></div>`).join("")
+ :'<p class="subtitle">Aucune mission pour le moment.</p>';
 }
+function escapeHTML(s){
+ return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+$("createMission").onclick=()=>{
+ const value=$("missionInput").value.trim();
+ if(!value)return;
+ missions.unshift(value);
+ localStorage.setItem("qg_missions",JSON.stringify(missions));
+ $("missionInput").value="";
+ renderMissions();addActivity("Nouvelle mission créée");
+};
+renderMissions();
+
+$("savePriority").onclick=()=>{
+ localStorage.setItem("qg_priority",$("priority").value);
+ $("priorityStatus").textContent="Priorité enregistrée sur cet appareil.";
+};
+$("priority").value=localStorage.getItem("qg_priority")||"";
+
+function addMessage(text,type){
+ const div=document.createElement("div");div.className="msg "+type;
+ div.textContent=text;$("messages").appendChild(div);
+ $("messages").scrollTop=$("messages").scrollHeight;
+}
+async function sendMessage(){
+ const input=$("chatInput"),message=input.value.trim();
+ if(!message)return;
+ input.value="";addMessage(message,"user");
+ history.push({role:"user",parts:[{text:message}]});
+ $("chatStatus").textContent="La secrétaire prépare sa réponse...";
+ $("sendBtn").disabled=true;
+ try{
+  const response=await fetch("/.netlify/functions/secratary",{
+   method:"POST",headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({message,history:history.slice(-12)})
+  });
+  const data=await response.json();
+  if(!response.ok)throw new Error(data.error||"Erreur de connexion");
+  const answer=data.reply||data.text||"Je n'ai pas reçu de réponse.";
+  addMessage(answer,"ai");
+  history.push({role:"model",parts:[{text:answer}]});
+  localStorage.setItem("qg_history",JSON.stringify(history.slice(-30)));
+  $("chatStatus").textContent="Réponse reçue.";
+  addActivity("La secrétaire générale a répondu");
+ }catch(error){
+  addMessage("Je ne parviens pas à joindre Gemini pour le moment. Vérifiez la fonction Netlify et sa clé API. Détail : "+error.message,"ai");
+  $("chatStatus").textContent="Connexion indisponible.";
+ }finally{$("sendBtn").disabled=false;}
+}
+$("sendBtn").onclick=sendMessage;
+$("chatInput").addEventListener("keydown",e=>{if(e.key==="Enter")sendMessage()});
+history.slice(-12).forEach(m=>{
+ const t=m.parts?.[0]?.text;
+ if(t)addMessage(t,m.role==="user"?"user":"ai");
+});
 </script>
 </body>
 </html>
+
